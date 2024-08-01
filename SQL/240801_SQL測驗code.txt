@@ -1,0 +1,187 @@
+
+--建立三張表格(FAC VLG POL)
+
+CREATE TABLE FAC 
+(
+  FCT_NB VARCHAR2(8) NOT NULL 
+, FCT_BUD NVARCHAR2(10) 
+, FCT_ADD NVARCHAR2(100) 
+, FCT_POP NUMBER(5,1) 
+, FCT_FL NUMBER(5,1) 
+, VLG_NB VARCHAR2(8) 
+, POL_NB VARCHAR2(8) 
+, CONSTRAINT TABLE1_PK PRIMARY KEY 
+  (
+    FCT_NB 
+  )
+  ENABLE 
+);
+
+CREATE TABLE VLG 
+(
+  VLG_NB VARCHAR2(8) NOT NULL 
+, VLG_NM NVARCHAR2(10) 
+, VLG_ADD NVARCHAR2(100) 
+, VLG_TEL VARCHAR2(20) 
+, CONSTRAINT VLG_PK PRIMARY KEY 
+  (
+    VLG_NB 
+  )
+  ENABLE 
+);
+
+CREATE TABLE POL 
+(
+  POL_NB VARCHAR2(8) NOT NULL 
+, POL_NM NVARCHAR2(10) 
+, POL_ADD NVARCHAR2(100) 
+, POL_TEL NVARCHAR2(20) 
+, CONSTRAINT POL_PK PRIMARY KEY 
+  (
+    POL_NB 
+  )
+  ENABLE 
+);
+
+================================================================================
+--將表格內資料新增至資料表內
+INSERT into FAC
+values('1', '公寓', '苗栗縣竹南鎮中埔街20號', '100', '1', 'C001', 'M001');
+INSERT into FAC
+values('2', '大樓', '苗栗縣竹南鎮和平街79號', '3142	', '1', 'C002', 'M001');	
+INSERT into FAC
+values('3', '大樓', '苗栗縣竹南鎮龍山路三段142號', '1072', '1', 'C003', 'M001');
+INSERT into FAC
+values('4', '公共設施	', '苗栗縣後龍鎮中華路1498號', '32', '1', 'C004', 'M001');
+INSERT into FAC
+values('5', '公寓', '苗栗縣苗栗市米市街80號', '106', '1', 'C005', 'M002');
+INSERT into FAC
+values('6', '公寓', '苗栗縣苗栗市光復路117號', '26', '1', 'C005', 'M002');
+INSERT into FAC
+values('7', '大樓', '苗栗縣苗栗市博愛街109號', '2038', '2', 'C005', 'M002');	
+INSERT into FAC
+values('8', '大樓', '苗栗縣苗栗市大同路53號', '128', '2', 'C005', 'M002');				
+INSERT into FAC
+values('9', '公共設施	', '苗栗縣頭份市民族里和平路102號', '353', '1', 'C006', 'M003');					
+INSERT into FAC
+values('10', '私營單位', '苗栗縣頭份市忠孝忠孝一路69號', '501', '1', 'C007', 'M003');					
+INSERT into FAC
+values('11', '公寓', '苗栗縣頭份市信義里中正路65號', '194', '1', 'C008', 'M003');				
+INSERT into FAC
+values('12', '私營單位', '苗栗縣頭份市信義里中正路116號', '78', '1', 'C008','M003');
+
+INSERT into VLG
+values('C001', '大埔里', '竹南鎮公義路1035號', '037-581072');			
+INSERT into VLG
+values('C002', '竹南里', '竹南鎮竹南里中山路103號', '037-472735');			
+INSERT into VLG
+values('C003', '山佳里', '竹南鎮山佳里國光街14號', '037-614186');			
+INSERT into VLG                      
+values('C004', '埔頂里', '後龍鎮埔頂里中興路136-1號', '037-724839');			
+INSERT into VLG
+values('C005', '綠苗里', '苗栗市綠苗里中正路766號', '037-333240');		 	
+INSERT into VLG
+values('C006', '民族里', '民族里民族路96號', '037-660001');			
+INSERT into VLG
+values('C007', '忠孝里', '忠孝里光大街82號', '037-661145');			
+INSERT into VLG
+values('C008', '信義里', '信義里信義路53巷1號', '037-616072');
+
+INSERT into POL
+values('M001', '竹南分局', '苗栗縣竹南鎮民族街72號', '037-474796');			
+INSERT into POL
+values('M002', '苗栗分局', '苗栗縣苗栗市金鳳街109號', '037-320059');			
+INSERT into POL
+values('M003', '頭份分局', '苗栗縣頭份市中興路503號', '037-663004');
+
+================================================================================
+--4-1. 列出轄管區域內有單一避難設施大於 1000 容人數量的轄管分局及分局連絡電話。
+SELECT
+    FAC.FCT_NB AS 編號,
+    FAC.FCT_POP AS 避難設施容人數量,
+    POL.POL_NM AS 轄管分局,
+    POL.POL_TEL AS 分局連絡電話
+FROM
+    FAC FAC
+LEFT JOIN
+    VLG VLG ON FAC.VLG_NB = VLG.VLG_NB
+LEFT JOIN
+    POL POL ON FAC.POL_NB = POL.POL_NB
+WHERE
+    FAC.FCT_POP > 1000;
+
+--4-2. 列出轄管區域內有單一避難設施大於 1000 容人數量的轄管分局及分局連絡電話,並計算出各避難設施大於1000容人數量的設施數量。(關鍵字:partition)
+SELECT
+    POL.POL_NM AS 轄管分局,
+    POL.POL_TEL AS 分局連絡電話,
+    COUNT(POL.POL_NM) AS 設施數量
+FROM
+    FAC FAC
+LEFT JOIN
+    VLG VLG ON FAC.VLG_NB = VLG.VLG_NB
+LEFT JOIN
+    POL POL ON FAC.POL_NB = POL.POL_NB
+WHERE
+    FAC.FCT_POP > 1000
+GROUP BY 
+    POL.POL_TEL,
+    POL.POL_NM;
+
+--4-3. 承上題,再補上避難設施地址、類型。
+SELECT
+    FAC.FCT_NB AS 編號,
+    FAC.FCT_POP AS 避難設施容人數量,
+    POL.POL_NM AS 轄管分局,
+    POL.POL_TEL AS 分局連絡電話,
+    --count(FAC.FCT_NB) AS 設施數量
+    FAC.FCT_ADD AS 避難設施地址,
+    FAC.FCT_BUD AS 類型
+FROM
+    FAC FAC
+LEFT JOIN
+    VLG VLG ON FAC.VLG_NB = VLG.VLG_NB
+LEFT JOIN
+    POL POL ON FAC.POL_NB = POL.POL_NB
+WHERE
+    FAC.FCT_POP > 1000;
+    
+--4-4. 查詢設施地址包含「中」字的避難設施,列出資料必須含村里別、避難設施地址、容人數量、轄管分局及分局連絡電話。
+SELECT
+    VLG.VLG_NM AS 村里別,
+    FAC.FCT_ADD AS 避難設施地址,
+    FAC.FCT_POP AS 避難設施容人數量,
+    POL.POL_NM AS 轄管分局,
+    POL.POL_TEL AS 分局連絡電話
+FROM
+    FAC FAC
+LEFT JOIN
+    VLG VLG ON FAC.VLG_NB = VLG.VLG_NB
+LEFT JOIN
+    POL POL ON FAC.POL_NB = POL.POL_NB
+WHERE
+    FAC.FCT_ADD like'%中%';
+
+--4-5. 查詢所有類別為公寓及大樓的避難設施,列出資料必須包含村里別、村里辦公室位置、避難設施地址、容人數量。
+SELECT
+    VLG.VLG_NM AS 村里別,
+    VLG.VLG_NM AS 村里辦公室位置,
+    FAC.FCT_ADD AS 避難設施地址,
+    FAC.FCT_POP AS 避難設施容人數量
+FROM
+    FAC FAC
+LEFT JOIN
+    VLG VLG ON FAC.VLG_NB = VLG.VLG_NB
+LEFT JOIN
+    POL POL ON FAC.POL_NB = POL.POL_NB
+WHERE
+    FAC.FCT_BUD ='大樓';						
+
+================================================================================
+--5-1. 更新避難設施地址是「苗栗縣竹南鎮和平街 79 號」的容人數量為 5000 人。
+UPDATE FAC
+SET FCT_ADD ='5000'
+WHERE FCT_NB = '2';
+
+--5-2. 刪除避難設施小於 1000 容人數量的資料。
+DELETE FROM FAC
+WHERE FCT_POP < 1000
