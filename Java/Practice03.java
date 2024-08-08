@@ -1,6 +1,6 @@
 package com.cathay.bk.practice.nt50355.b;
 
-// IWork接口
+// IWork介面
 interface IWork {
 	void printInfo();
 }
