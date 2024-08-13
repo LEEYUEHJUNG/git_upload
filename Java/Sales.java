@@ -1,13 +1,16 @@
 package com.cathay.bk.practice.nt50355.b;
 
-public class Sales extends Employee {
-	private int bonus;
-	private int payment;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-	public Sales(String name, String department, int salary, int salesAmount) {
+public class Sales extends Employee {
+	private BigDecimal bonus;
+	private BigDecimal payment;
+
+	public Sales(String name, String department, BigDecimal salary, BigDecimal salesAmount) {
 		super(name, department, salary);
-		this.bonus = (int) (salesAmount * 0.05);
-		this.payment = salary + this.bonus;
+		this.bonus = salesAmount.multiply(new BigDecimal("0.05")).setScale(0,RoundingMode.HALF_UP) ;
+		this.payment = salary.add(this.bonus).setScale(0,RoundingMode.HALF_UP);
 	}
 
 	@Override
@@ -18,20 +21,19 @@ public class Sales extends Employee {
 	}
 
 	// Getter 和 Setter 方法
-	public int getBonus() {
+	public BigDecimal getBonus() {
 		return bonus;
 	}
 
-	public void setBonus(int bonus) {
+	public void setBonus(BigDecimal bonus) {
 		this.bonus = bonus;
 	}
 
-	public int getPayment() {
+	public BigDecimal getPayment() {
 		return payment;
 	}
 
-	public void setPayment(int payment) {
-		this.payment = payment;
+	public void setPayment(BigDecimal payment) {
+		this.payment = payment.setScale(0,RoundingMode.HALF_UP);
 	}
 }
-

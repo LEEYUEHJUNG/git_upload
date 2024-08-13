@@ -1,10 +1,9 @@
 package com.cathay.bk.practice.nt50355.b;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Practice02 {
 
@@ -23,17 +22,14 @@ public class Practice02 {
 		System.out.print("排序前: ");
 		printNumbers(set);
 
-		// 將數字轉換為列表並排序
-		List<Integer> sortedList = new ArrayList<>(set);
-		Collections.sort(sortedList);
-
-		// 顯示排序後結果
+		// 將數字排序,顯示排序後結果
+		Set<Integer> sortedList = new TreeSet<>(set);
 		System.out.print("排序後: ");
 		printNumbers(sortedList);
 	}
 
 	// 打印數字
-	static void printNumbers(Iterable<Integer> numbers) {
+	private static void printNumbers(Iterable<Integer> numbers) {
 		for (Integer number : numbers) {
 			System.out.print(number + " ");
 		}

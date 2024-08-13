@@ -1,9 +1,11 @@
 package com.cathay.bk.practice.nt50355.b;
 
-public class Supervisor extends Employee {
-	private int payment;
+import java.math.BigDecimal;
 
-	public Supervisor(String name, String department, int salary) {
+public class Supervisor extends Employee {
+	private BigDecimal payment;
+
+	public Supervisor(String name, String department, BigDecimal salary) {
 		super(name, department, salary);
 		this.payment = salary;
 	}
@@ -15,14 +17,11 @@ public class Supervisor extends Employee {
 	}
 
 	// Getter 和 Setter 方法
-	public int getPayment() {
+	public BigDecimal getPayment() {
 		return payment;
 	}
 
-	public void setPayment(int payment) {
+	public void setPayment(BigDecimal payment) {
 		this.payment = payment;
 	}
 }
- 
-
-

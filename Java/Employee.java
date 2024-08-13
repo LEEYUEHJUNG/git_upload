@@ -1,11 +1,13 @@
 package com.cathay.bk.practice.nt50355.b;
 
- class Employee implements IWork {
+import java.math.BigDecimal;
+
+abstract class Employee implements IWork {
 	private String name;
 	private String department;
-	private int salary;
+	private BigDecimal salary;
 
-	public Employee(String name, String department, int salary) {
+	public Employee(String name, String department, BigDecimal salary) {
 		this.name = name;
 		this.department = department;
 		this.salary = salary;
@@ -13,8 +15,7 @@ package com.cathay.bk.practice.nt50355.b;
 
 	@Override
 	public void printInfo() {
-		System.out.print("姓名: " + name);
-		System.out.println("  工作部門: " + department);
+		System.out.println("姓名: " + name + "  工作部門: " + department);
 		System.out.println("月薪: " + salary);
 	}
 
@@ -35,13 +36,13 @@ package com.cathay.bk.practice.nt50355.b;
 		this.department = department;
 	}
 
-	public int getSalary() {
+	public BigDecimal getSalary() {
 		return salary;
 	}
 
-	public void setSalary(int salary) {
+	public void setSalary(BigDecimal salary) {
 		this.salary = salary;
 	}
+
+	public  abstract BigDecimal getPayment(); 
 }
-
-

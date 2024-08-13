@@ -1,0 +1,101 @@
+package com.cathay.bk.practice.nt50355.b;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+
+public class Practice06 {
+
+    public static void main(String[] args) {
+        // 定義輸入和輸出檔案的路徑
+        String inputFile = "C:\\Users\\Admin\\Desktop\\cars.csv";
+        String outputFile = "C:\\Users\\Admin\\Desktop\\cars2.csv";
+
+        // 用於存儲 CSV 內容的清單，其中每個元素是包含欄位名稱及其對應值的 Map
+        List<Map<String, Object>> carsList = new ArrayList<>();
+
+        // 使用 try-with-resources 語法來自動關閉 BufferedReader
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+            // 讀取並解析 CSV 的表頭行（第一行）
+            String headerLine = br.readLine();
+            String[] headers = headerLine.split(",");
+
+            String line;
+            // 逐行讀取 CSV 檔案的內容
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                Map<String, Object> carData = new HashMap<>();
+                // 迭代每個欄位，檢查是否為數字並進行對應的處理
+                for (int i = 0; i < values.length; i++) {
+                    String value = values[i];
+                    if (isNumeric(value)) {
+                        // 如果是數字，則將其轉換為 BigDecimal
+                        carData.put(headers[i], new BigDecimal(value));
+                    } else {
+                        // 否則將其作為字串存儲
+                        carData.put(headers[i], value);
+                    }
+                }
+                // 將處理好的資料加入清單
+                carsList.add(carData);
+            }
+
+        } catch (IOException e) {
+            // 捕捉並處理 I/O 異常
+            e.printStackTrace();
+        }
+
+        // 將清單根據 "Price" 欄位進行排序，從高到低
+        Collections.sort(carsList, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> car1, Map<String, Object> car2) {
+                BigDecimal price1 = (BigDecimal) car1.get("Price");
+                BigDecimal price2 = (BigDecimal) car2.get("Price");
+                return price2.compareTo(price1); // 逆序排序
+            }
+        });
+
+        // 使用 try-with-resources 語法來自動關閉 BufferedWriter
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+            // 寫入表頭（欄位名稱）至輸出檔案
+            bw.write(String.join(",", carsList.get(0).keySet()));
+            bw.newLine();
+
+            // 將每一行的內容寫入輸出檔案
+            for (Map<String, Object> car : carsList) {
+                List<String> values = new ArrayList<>();
+                for (String header : car.keySet()) {
+                    Object value = car.get(header);
+                    if (value instanceof BigDecimal) {
+                        // 如果值是 BigDecimal，則轉換為字串格式進行寫入
+                        values.add(((BigDecimal) value).toPlainString());
+                    } else {
+                        // 否則直接以字串形式寫入
+                        values.add(value.toString());
+                    }
+                }
+                // 將每行的內容組合並寫入檔案
+                bw.write(String.join(",", values));
+                bw.newLine();
+            }
+
+        } catch (IOException e) {
+            // 捕捉並處理 I/O 異常
+            e.printStackTrace();
+        }
+    }
+
+    // 判斷一個字串是否為數字，適用於 BigDecimal 的轉換
+    private static boolean isNumeric(String str) {
+        try {
+            new BigDecimal(str); // 嘗試將字串轉換為 BigDecimal
+            return true; // 轉換成功，返回 true
+        } catch (NumberFormatException e) {
+            return false; // 如果捕捉到異常，說明不是數字，返回 false
+        }
+    }
+}
