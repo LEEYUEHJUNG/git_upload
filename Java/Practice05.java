@@ -1,7 +1,7 @@
 package com.cathay.bk.practice.nt50355.b;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Scanner;
 
 public class Practice05 {
@@ -21,17 +21,20 @@ public class Practice05 {
 		}
 	}
 
+//	private static void printCalendarUsingLocalDate(int year, int month) {
+//		LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+//		DayOfWeek firstDayOfWeek = firstDayOfMonth.getDayOfWeek();
+//		int daysInMonth = firstDayOfMonth.lengthOfMonth();
 	private static void printCalendarUsingLocalDate(int year, int month) {
-		LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
-		DayOfWeek firstDayOfWeek = firstDayOfMonth.getDayOfWeek();
-		int daysInMonth = firstDayOfMonth.lengthOfMonth();
+		int firstDayOfWeek = LocalDate.of(year, month, 1).getDayOfWeek().getValue();
+		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
 
 		System.out.println("---------------------------");
 		System.out.println("日   一   二  三  四   五   六");
 		System.out.println("===========================");
 
 		// 打印月曆的第一行，根據星期幾來決定縮進空格
-		int value = firstDayOfWeek.getValue();
+		int value = firstDayOfWeek;
 		if (value != 7) { // LocalDate中星期天是7
 			for (int i = 1; i <= value; i++) {
 				System.out.print("    ");

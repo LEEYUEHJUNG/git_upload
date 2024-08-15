@@ -8,8 +8,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class Practice06 {
 
+public class Practice06 {
+	
+
+    private static final String FORMAT = "%-15s %-10s %10s %15s";
+
+	
 	public static void main(String[] args) {
 
 		String inputFile = "C:\\Users\\Admin\\Desktop\\cars.csv";
@@ -28,7 +33,7 @@ public class Practice06 {
 
 			while ((line = br.readLine()) != null) {
 				String[] values = line.split(",");
-				Map<String, Object> carData = new HashMap<>();
+				Map<String, Object> carData = new LinkedHashMap<>();
 
 				for (int i = 0; i < values.length; i++) {
 					String value = values[i];
@@ -48,14 +53,12 @@ public class Practice06 {
 		}
 
 		// 將清單根據 "Price" 欄位進行排序，從高到低
-		Collections.sort(carsList, new Comparator<Map<String, Object>>() {
-			@Override
-			public int compare(Map<String, Object> car1, Map<String, Object> car2) {
-				BigDecimal price1 = (BigDecimal) car1.get("Price");
-				BigDecimal price2 = (BigDecimal) car2.get("Price");
-				return price2.compareTo(price1);
-			}
-		});
+		 Collections.sort(carsList, new Comparator<Map<String, Object>>() {
+	            @Override
+	            public int compare(Map<String, Object> car1, Map<String, Object> car2) {
+	                return ((BigDecimal) car2.get("Price")).compareTo((BigDecimal) car1.get("Price"));
+	            }
+	        });
 
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
 
@@ -92,9 +95,7 @@ public class Practice06 {
 			}
 		});
 
-		// 格式化輸出：對齊每一欄
-		String format = "%-15s %-10s %10s %15s";
-		System.out.println(String.format(format, "Manufacturer", "TYPE", "Min.Price", "Price"));
+		System.out.println(String.format(FORMAT, "Manufacturer", "TYPE", "Min.Price", "Price"));
 
 		// 重置小計
 		String lastManufacturer = "";
@@ -110,7 +111,7 @@ public class Practice06 {
 
 			// 如果遇到新製造商，打印上個製造商的小計
 			if (!manufacturer.equals(lastManufacturer) && !lastManufacturer.isEmpty()) {
-				System.out.println(String.format("%-15s %-10s %9s %15s", "小計", "", totalMinPrice, totalPrice));
+				System.out.println(String.format(FORMAT, "小計", "", totalMinPrice, totalPrice));
 
 				// 重置小計
 				totalMinPrice = BigDecimal.ZERO;
@@ -118,7 +119,7 @@ public class Practice06 {
 			}
 
 			// 打印當前車輛的資料
-			System.out.println(String.format(format, car.get("Manufacturer"), car.get("Type"), car.get("Min.Price"),
+			System.out.println(String.format(FORMAT, car.get("Manufacturer"), car.get("Type"), car.get("Min.Price"),
 					car.get("Price")));
 
 			// 累積小計
@@ -130,15 +131,19 @@ public class Practice06 {
 		}
 
 		// 打印最後一個製造商的小計
+//		StringUtils.isBlank(lastManufacturer);
 		if (!lastManufacturer.isEmpty()) {
-			System.out.println(String.format(format, "小計", "", totalMinPrice, totalPrice));
+			System.out.println(String.format(FORMAT, "小計", "", totalMinPrice, totalPrice));
 		}
 		// 最後打印總計
-		System.out.println(String.format(format, "合計", "", grandTotalMinPrice, grandTotalPrice));
+		System.out.println(String.format(FORMAT, "合計", "", grandTotalMinPrice, grandTotalPrice));
 	}
 
 	// 判斷一個字串是否為數字，適用於 BigDecimal 的轉換
 	private static boolean isNumeric(String str) {
+		if (str == null || str.isEmpty()) {
+			return false;
+		}
 		try {
 			new BigDecimal(str);
 			return true;

@@ -6,83 +6,63 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Practice07 {
-
 	public static void main(String[] args) {
-		String jdbcDriver = "oracle.jdbc.driver.OracleDriver";
-		String dbUrl = "jdbc:oracle:thin:@//localhost:1521/XE";
-		String username = "student";
-		String password = "student123456";
 
-		Connection conn = null;
-
-		try {
-			Class.forName(jdbcDriver);
-			conn = DriverManager.getConnection(dbUrl, username, password);
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@//localhost:1521/XE", "student",
+				"student123456"); Statement stmt = conn.createStatement();) {
+			// 關閉自動提交
+			conn.setAutoCommit(false);
 			try (Scanner scanner = new Scanner(System.in)) {
 				System.out.println("請選擇以下指令輸入: select、insert、update、delete");
 				String command = scanner.nextLine();
 
 				switch (command.toLowerCase()) {
 				case "select":
-					System.out.print("請輸入製造商:");
-					String manufacturer = scanner.nextLine();
-					System.out.print("請輸入類型:");
-					String type = scanner.nextLine();
-					query(conn, manufacturer, type);
+					Map<String, String> selectData = getUserInput(scanner, "製造商", "類型");
+					query(conn, selectData.get("製造商"), selectData.get("類型"));
 					break;
 				case "insert":
-					Map<String, String> insertData = new HashMap<>();
-					System.out.print("請輸入製造商:");
-					insertData.put("MANUFACTURER", scanner.nextLine());
-					System.out.print("請輸入類型:");
-					insertData.put("TYPE", scanner.nextLine());
-					System.out.print("請輸入底價:");
-					insertData.put("MIN_PRICE", scanner.nextLine());
-					System.out.print("請輸入售價:");
-					insertData.put("PRICE", scanner.nextLine());
+					Map<String, String> insertData = getUserInput(scanner, "製造商", "類型", "底價", "售價");
 					insert(conn, insertData);
 					break;
 				case "update":
-					Map<String, String> updateData = new HashMap<>();
-					System.out.print("請輸入製造商:");
-					updateData.put("MANUFACTURER", scanner.nextLine());
-					System.out.print("請輸入類型:");
-					updateData.put("TYPE", scanner.nextLine());
-					System.out.print("請輸入底價:");
-					updateData.put("MIN_PRICE", scanner.nextLine());
-					System.out.print("請輸入售價:");
-					updateData.put("PRICE", scanner.nextLine());
+					Map<String, String> updateData = getUserInput(scanner, "製造商", "類型", "底價", "售價");
 					update(conn, updateData);
 					break;
 				case "delete":
-					System.out.print("請輸入製造商:");
-					manufacturer = scanner.nextLine();
-					System.out.print("請輸入類型:");
-					type = scanner.nextLine();
-					delete(conn, manufacturer, type);
+					Map<String, String> deleteData = getUserInput(scanner, "製造商", "類型");
+					delete(conn, deleteData.get("製造商"), deleteData.get("類型"));
+					break;
+				default:
+					System.out.println("無效的指令");
 					break;
 				}
+				// 成功執行後提交交易
+				conn.commit();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			}
 		}
 	}
 
+	private static Map<String, String> getUserInput(Scanner scanner, String... keys) {
+		Map<String, String> inputData = new HashMap<>();
+		for (String key : keys) {
+			System.out.print("請輸入" + key + ": ");
+			inputData.put(key, scanner.nextLine());
+		}
+		return inputData;
+	}
+
 	public static void query(Connection conn, String manufacturer, String type) throws SQLException {
-		String sql = "SELECT MANUFACTURER, TYPE, MIN_PRICE, PRICE FROM CARS WHERE MANUFACTURER = ? AND TYPE = ?";
+		String sql = "select MANUFACTURER, TYPE, MIN_PRICE, PRICE from STUDENT.CARS where MANUFACTURER = ? AND TYPE = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, manufacturer);
 			pstmt.setString(2, type);
@@ -99,33 +79,36 @@ public class Practice07 {
 	}
 
 	public static void insert(Connection conn, Map<String, String> data) throws SQLException {
-		String sql = "INSERT INTO CARS (MANUFACTURER, TYPE, MIN_PRICE, PRICE) VALUES (?, ?, ?, ?)";
+		String sql = "insert into STUDENT.CARS (MANUFACTURER, TYPE, MIN_PRICE, PRICE) values (?, ?, ?, ?)";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, data.get("MANUFACTURER"));
-			pstmt.setString(2, data.get("TYPE"));
-			pstmt.setBigDecimal(3, new BigDecimal(data.get("MIN_PRICE")));
-			pstmt.setBigDecimal(4, new BigDecimal(data.get("PRICE")));
+			pstmt.setString(1, data.get("製造商"));
+			pstmt.setString(2, data.get("類型"));
+			pstmt.setBigDecimal(3, new BigDecimal(data.get("底價")));
+			pstmt.setBigDecimal(4, new BigDecimal(data.get("售價")));
+			pstmt.executeUpdate();
 			System.out.println("新增成功");
 		}
 	}
 
 	public static void update(Connection conn, Map<String, String> data) throws SQLException {
-		String sql = "UPDATE CARS SET MIN_PRICE = ?, PRICE = ? WHERE MANUFACTURER = ? AND TYPE = ?";
+		String sql = "update STUDENT.CARS set MIN_PRICE = ?, PRICE = ? where MANUFACTURER = ? and TYPE = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setBigDecimal(1, new BigDecimal(data.get("MIN_PRICE")));
-			pstmt.setBigDecimal(2, new BigDecimal(data.get("PRICE")));
-			pstmt.setString(3, data.get("MANUFACTURER"));
-			pstmt.setString(4, data.get("TYPE"));
-			System.out.println("新增成功");
+			pstmt.setBigDecimal(1, new BigDecimal(data.get("底價")));
+			pstmt.setBigDecimal(2, new BigDecimal(data.get("售價")));
+			pstmt.setString(3, data.get("製造商"));
+			pstmt.setString(4, data.get("類型"));
+			pstmt.executeUpdate();
+			System.out.println("更新成功");
 		}
 	}
 
 	public static void delete(Connection conn, String manufacturer, String type) throws SQLException {
-		String sql = "DELETE FROM CARS WHERE MANUFACTURER = ? AND TYPE = ?";
+		String sql = "delete from STUDENT.CARS WHERE MANUFACTURER = ? and TYPE = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, manufacturer);
 			pstmt.setString(2, type);
-			System.out.println("新增成功");
+			pstmt.executeUpdate();
+			System.out.println("刪除成功");
 		}
 	}
 }

@@ -5,47 +5,27 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Statement;
 
 public class Practice0701 {
-
 	public static void main(String[] args) {
-
-		String dbUrl = "jdbc:oracle:thin:@//localhost:1521/XE"; 
-		String username = "student";
-		String password = "student123456";
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
-		try {
+		try (Connection conn1 = DriverManager.getConnection("jdbc:oracle:thin:@//localhost:1521/XE", "student",
+				"student123456"); Statement stmt = conn1.createStatement();) {
 
-			conn = DriverManager.getConnection(dbUrl, username, password);
-
-			String sql = "select MANUFACTURER, TYPE, MIN_PRICE, PRICE from CARS";
-			pstmt = conn.prepareStatement(sql);
+			String sql = "select MANUFACTURER, TYPE, MIN_PRICE, PRICE from STUDENT.CARS";
+			pstmt = conn1.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
-			List<Map<String, Object>> carList = new ArrayList<>();
-
 			while (rs.next()) {
-				Map<String, Object> car = new HashMap<>();
-				car.put("MANUFACTURER", rs.getString("MANUFACTURER"));
-				car.put("TYPE", rs.getString("TYPE"));
-				car.put("MIN_PRICE", rs.getDouble("MIN_PRICE"));
-				car.put("PRICE", rs.getDouble("PRICE"));
-				carList.add(car);
-			}
-
-			for (Map<String, Object> car : carList) {
-				System.out.println("Manufacturer: " + car.get("MANUFACTURER"));
-				System.out.println("Type: " + car.get("TYPE"));
-				System.out.println("Min Price: " + car.get("MIN_PRICE"));
-				System.out.println("Price: " + car.get("PRICE"));
+				System.out.println("Manufacturer: " + rs.getString("MANUFACTURER"));
+				System.out.println("Type: " + rs.getString("TYPE"));
+				System.out.println("Min Price: " + rs.getDouble("MIN_PRICE"));
+				System.out.println("Price: " + rs.getDouble("PRICE"));
 				System.out.println("---------------------------");
 			}
 
