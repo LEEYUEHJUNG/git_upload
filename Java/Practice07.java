@@ -1,3 +1,4 @@
+
 package com.cathay.bk.practice.nt50355.b;
 
 import java.math.BigDecimal;
@@ -11,6 +12,10 @@ import java.util.Scanner;
 
 public class Practice07 {
     private static final String JDBC_URL = "jdbc:oracle:thin:@//localhost:1521/XE";
+    
+    private static final String SQL_SELECT = "select MANUFACTURER, TYPE, MIN_PRICE, PRICE from STUDENT.CARS where MANUFACTURER = ? and TYPE = ?";
+    private static final String SQL_UPDATE = "update STUDENT.CARS set MIN_PRICE = ?, PRICE = ? where MANUFACTURER = ? and TYPE = ?";
+    private static final String SQL_DELETE = "delete from STUDENT.CARS where MANUFACTURER = ? and TYPE = ?";
 
     public static void main(String[] args) {
 
@@ -47,7 +52,11 @@ public class Practice07 {
         }
     }
 
-    private static Map<String, String> getUserInput(Scanner scanner, String... keys) {
+    private static void insert(Connection conn, Map<String, String> userInput) {
+		
+	}
+
+	private static Map<String, String> getUserInput(Scanner scanner, String... keys) {
         Map<String, String> inputData = new HashMap<>();
         for (String key : keys) {
             System.out.print("請輸入" + key + ": ");
@@ -60,13 +69,11 @@ public class Practice07 {
         Map<String, String> data;
         if (command.equals("update")) {
             data = getUserInput(scanner, "製造商", "底價", "售價", "類型");
-            String sql = "update STUDENT.CARS set MIN_PRICE = ?, PRICE = ? where MANUFACTURER = ? and TYPE = ?";
-            executeUpdateOrDelete(conn, sql, data);
+            executeUpdateOrDelete(conn, SQL_UPDATE, data);
             System.out.println("更新成功");
         } else if (command.equals("delete")) {
             data = getUserInput(scanner, "製造商", "類型");
-            String sql = "delete from STUDENT.CARS where MANUFACTURER = ? and TYPE = ?";
-            executeUpdateOrDelete(conn, sql, data);
+            executeUpdateOrDelete(conn, SQL_DELETE, data);
             System.out.println("刪除成功");
         }
     }
@@ -95,32 +102,11 @@ public class Practice07 {
     }
 
     public static void query(Connection conn, String manufacturer, String type) throws SQLException {
-        String sql = "select MANUFACTURER, TYPE, MIN_PRICE, PRICE from STUDENT.CARS where MANUFACTURER = ? and TYPE = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL_SELECT)) {
             pstmt.setString(1, manufacturer);
             pstmt.setString(2, type);
             pstmt.executeQuery();
-        }
-    }
-
-    public static void insert(Connection conn, Map<String, String> data) throws SQLException {
-        String sql = "insert into STUDENT.CARS (MANUFACTURER, TYPE, MIN_PRICE, PRICE) values (?, ?, ?, ?)";
-        try {
-            conn.setAutoCommit(false); // 禁用自動提交
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, data.get("製造商"));
-                pstmt.setString(2, data.get("類型"));
-                pstmt.setBigDecimal(3, new BigDecimal(data.get("底價")));
-                pstmt.setBigDecimal(4, new BigDecimal(data.get("售價")));
-                pstmt.executeUpdate(); // 執行 SQL
-                conn.commit(); // 提交交易
-                System.out.println("新增成功");
-            } catch (SQLException e) {
-                conn.rollback(); // 發生錯誤時回滾交易
-                throw e;
-            }
-        } finally {
-            conn.setAutoCommit(true); // 恢復自動提交狀態
+            System.out.println("查詢成功");
         }
     }
 }
