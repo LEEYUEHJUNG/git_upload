@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation - Table</title>
+    <style>
+        table {     
+           border-collapse: collapse; 
+        }
+
+        th,td 
+        {
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+    </style>
+    <script src="DomTable.js"></script>
+</head>
+
+<body>
+    <table border="1">
+
+        <tr>
+            <th><label for="manufacturer">製造商</label></th>
+            <td><input type="text" id="manufacturer"></td>
+            <th><label for="category">類別</label></th>
+            <td><input type="text" id="category"></td>
+        </tr>
+        <tr>
+            <th><label for="cost">底價</label></th>
+            <td><input type="text" id="cost"></td>
+            <th><label for="price">售價</label></th>
+            <td><input type="text" id="price"></td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <button type="button" id="addButton">新增</button>
+                <button type="button" id="clearButton">清空</button>
+                <button type="button" id="modifyButton">修改</button>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+    <table id="resultTable" border="1">
+        <thead>
+            <tr>
+                <th></th>
+                <th>序號</th>
+                <th>製造商</th>
+                <th>類別</th>
+                <th>底價</th>
+                <th>售價</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    </p>
+</body>
+
+</html>

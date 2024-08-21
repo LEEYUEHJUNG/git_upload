@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HashMap Simulation</title>
+    <style>
+        #key {
+            margin-left: 20px;
+        }
+
+        #putButton {
+            margin-left: 10px;
+        }
+
+        #clearButton {
+            margin-left: 20px;
+        }
+
+        span {
+            color: gray;
+        }
+
+        #result {
+            margin-left: 40px;
+        }
+    </style>
+
+    <script src="HashMap.js">
+        function putValue() {
+            var key = document.getElementById('key').value;
+            var value = document.getElementById('value').value;
+            hashMap.put(key, value);
+            displayResult();
+        }
+
+        function clearValues() {
+            hashMap.clear();
+            document.getElementById('key').value = '';
+            document.getElementById('value').value = '';
+            displayResult();
+        } 
+
+    </script>
+</head>
+
+<body>
+    <div>
+        <p>
+            <label for="key">KEY </label>
+            <input type="text" id="key"><br>
+        </p>
+
+        <label for="value">VALUE </label>
+        <input type="text" id="value">
+    </div>
+
+    <p>
+        <span>----------------------------------------------------------------------------<br>
+    </p>
+
+    <div>
+        <button id="putButton" onclick="putValue()">Put</button>
+        <button id="clearButton" onclick="clearValues()">Clear</button>
+    </div>
+
+    <p>
+        <span>----------------------------------------------------------------------------<br>
+
+    </p>
+
+    【RESULT】
+
+    <p>
+    <div id="result"></div>
+    </p>
+
+</body>
+
+</html>
