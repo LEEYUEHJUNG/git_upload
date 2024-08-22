@@ -8,15 +8,13 @@ window.onload = function () {
 
     function addRow() {
         const values = fields.map(function (field) {
-            return document.getElementById(field).value.trim(); 
+            return document.getElementById(field).value.trim();
         });
 
-        if (!values[0].trim() || !values[1].trim() ) {
+        if (!values[0].trim() || !values[1].trim()) {
             alert('製造商或類別不可空白');
             return;
-        }
-
-        if (isNaN(values[2]) || isNaN(values[3]) || values[2] === '' || values[3] === '') {
+        } else if (isNaN(values[2]) || isNaN(values[3])) {
             alert('底價和售價必須為數字');
             return;
         }
@@ -57,8 +55,8 @@ window.onload = function () {
 
     function clearTable() {
         const table = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
-        table.innerHTML = ''; 
-        clearFields(); 
+        table.innerHTML = '';
+        clearFields();
     }
 
     window.deleteRow = function (button) {
@@ -83,7 +81,7 @@ window.onload = function () {
 
     function modifyRow() {
         const values = fields.map(function (field) {
-            return document.getElementById(field).value.trim(); 
+            return document.getElementById(field).value.trim();
         });
 
         if (!values[0].trim() || !values[1].trim()) {
