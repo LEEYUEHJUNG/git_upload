@@ -27,22 +27,7 @@
         }
     </style>
 
-    <script src="HashMap.js">
-        function putValue() {
-            var key = document.getElementById('key').value;
-            var value = document.getElementById('value').value;
-            hashMap.put(key, value);
-            displayResult();
-        }
-
-        function clearValues() {
-            hashMap.clear();
-            document.getElementById('key').value = '';
-            document.getElementById('value').value = '';
-            displayResult();
-        } 
-
-    </script>
+    <script src="HashMap.js"></script>
 </head>
 
 <body>
@@ -61,8 +46,8 @@
     </p>
 
     <div>
-        <button id="putButton" onclick="putValue()">Put</button>
-        <button id="clearButton" onclick="clearValues()">Clear</button>
+        <button id="putButton">Put</button>
+        <button id="clearButton">Clear</button>
     </div>
 
     <p>
